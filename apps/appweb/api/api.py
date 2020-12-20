@@ -23,3 +23,22 @@ def proveed_api_view(request):
             proveed_serializer.save()
             return Response(proveed_serializer.data)
         return Response(proveed_serializer.errors)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def proveed_detail_api_view(request, pk=None):
+    if request.method == 'GET':
+        proveed = Proveedor.objects.filter(id = pk).first()
+        proveed_serializer = ProveedorSerializer(proveed)
+        return Response(proveed_serializer.data)
+    elif request.method == 'PUT':                   # en rest en vez de POST se usa PUT
+        proveed = Proveedor.objects.filter(id = pk).first()
+        # al pasar la instancia "proveed" rest sabe que es para actualizar con la "data"
+        proveed_serializer = ProveedorSerializer(proveed, data = request.data)
+        if proveed_serializer.is_valid():
+            proveed_serializer.save()
+            return Response(proveed_serializer.data)
+        return Response(proveed_serializer.errors)
+    elif request.method == 'DELETE':
+        proveed = Proveedor.objects.filter(id = pk).first()
+        proveed.delete()
+        return Response('Eliminado')
